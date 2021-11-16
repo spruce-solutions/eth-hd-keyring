@@ -100,9 +100,9 @@ class HdKeyring extends SimpleKeyring {
       let index = prefixes.indexOf(prefix);
       if (index > -1 && validRange[index] != true) {
         validRange[index] = true;
-        newWallets.push(wallet);
-        this.wallets.push(wallet);
       }
+      newWallets.push(wallet);
+      this.wallets.push(wallet);
       i++;
     }
 
