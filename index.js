@@ -55,7 +55,7 @@ class HdKeyring extends SimpleKeyring {
     }
 
     if (opts.addAccountsWithPrefixes) {
-      return this.addAccountsWithPrefixes(bytePrefixes);
+      return this.addAccountsWithPrefixes(opts.addAccountsWithPrefixes);
     }
 
     return Promise.resolve([]);
