@@ -10,6 +10,22 @@ const sigUtil = require('eth-sig-util')
 const hdPathString = `m/44'/60'/0'/0`
 const type = 'HD Key Tree'
 
+const bytePrefixes = [
+  '00',
+  '0a',
+  '0b',
+  '0c',
+  '1a',
+  '2a',
+  '3a',
+  '1b',
+  '2b',
+  '3b',
+  '1c',
+  '2c',
+  '3c',
+];
+
 class HdKeyring extends SimpleKeyring {
 
   /* PUBLIC METHODS */
@@ -42,7 +58,11 @@ class HdKeyring extends SimpleKeyring {
       return this.addAccounts(opts.numberOfAccounts)
     }
 
-    return Promise.resolve([])
+    if (opts.addAccountsWithPrefixes) {
+      return this.addAccountsWithPrefixes(bytePrefixes);
+    }
+
+    return Promise.resolve([]);
   }
 
   addAccounts (numberOfAccounts = 1) {
@@ -64,10 +84,40 @@ class HdKeyring extends SimpleKeyring {
     return Promise.resolve(hexWallets)
   }
 
-  getAccounts () {
-    return Promise.resolve(this.wallets.map((w) => {
-      return sigUtil.normalize(w.getAddress().toString('hex'))
-    }))
+  addAccountsWithPrefixes(prefixes = bytePrefixes) {
+    if (!this.root) {
+      this._initFromMnemonic(bip39.generateMnemonic());
+    }
+
+    const newWallets = [];
+    const validRange = new Array(prefixes.length).fill(false);
+    let i = 0;
+    while (!validRange.every((v) => v === true)) {
+      const child = this.root.deriveChild(i);
+      const wallet = child.getWallet();
+      let addr = wallet.getAddress().toString('hex');
+      let prefix = addr.substring(0, 2);
+      let index = prefixes.indexOf(prefix);
+      if (index > -1 && validRange[index] != true) {
+        validRange[index] = true;
+        newWallets.push(wallet);
+        this.wallets.push(wallet);
+      }
+      i++;
+    }
+
+    const hexWallets = newWallets.map((w) => {
+      return normalize(w.getAddress().toString('hex'));
+    });
+    return Promise.resolve(hexWallets);
+  }
+
+  getAccounts() {
+    return Promise.resolve(
+      this.wallets.map((w) => {
+        return normalize(w.getAddress().toString('hex'));
+      }),
+    );
   }
 
   /* PRIVATE METHODS */

@@ -14,10 +14,27 @@ const secondAcct = '0x1b00aed43a693f3a957f9feb5cc08afa031e37a0'
 
 describe('hd-keyring', function() {
 
-  let keyring
-  beforeEach(function() {
-    keyring = new HdKeyring()
-  })
+const bytePrefixes = [
+  '00',
+  '0a',
+  '0b',
+  '0c',
+  '1a',
+  '2a',
+  '3a',
+  '1b',
+  '2b',
+  '3b',
+  '1c',
+  '2c',
+  '3c',
+];
+
+describe('hd-keyring', function () {
+  let keyring;
+  beforeEach(function () {
+    keyring = new HdKeyring();
+  });
 
   describe('constructor', function(done) {
     it('constructs', function (done) {
@@ -109,6 +126,54 @@ describe('hd-keyring', function() {
   describe('#getAccounts', function() {
     it('calls getAddress on each wallet', function(done) {
 
+          return keyring.serialize();
+        })
+        .then((serialized) => {
+          assert.equal(serialized.mnemonic, sampleMnemonic);
+          done();
+        });
+    });
+  });
+
+  describe('#addAccounts', function () {
+    describe('with no arguments', function () {
+      it('creates a single wallet', function (done) {
+        keyring.addAccounts().then(() => {
+          assert.equal(keyring.wallets.length, 1);
+          done();
+        });
+      });
+    });
+
+    describe('with a numeric argument', function () {
+      it('creates that number of wallets', function (done) {
+        keyring.addAccounts(3).then(() => {
+          assert.equal(keyring.wallets.length, 3);
+          done();
+        });
+      });
+    });
+  });
+
+  describe('#addAccountsWithPrefixes', function () {
+    describe('with no arguments', function () {
+      it('creates a wallet with default byte prefixes', function (done) {
+        keyring.addAccountsWithPrefixes().then(() => {
+          assert.equal(keyring.wallets.length, 13);
+          for (let i = 0; i < keyring.wallets.length; i++) {
+            let addr = keyring.wallets[i].getAddress().toString('hex');
+            let prefix = addr.substring(0, 2);
+            let index = bytePrefixes.indexOf(prefix);
+            assert.equal(index > -1, true);
+          }
+          done();
+        });
+      });
+    });
+  });
+
+  describe('#getAccounts', function () {
+    it('calls getAddress on each wallet', function (done) {
       // Push a mock wallet
       const desiredOutput = 'foo'
       keyring.wallets.push({
