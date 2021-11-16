@@ -85,10 +85,9 @@ class HdKeyring extends SimpleKeyring {
       this._initFromMnemonic(bip39.generateMnemonic());
     }
 
-    const oldLen = this.wallets.length;
     const newWallets = [];
     const validRange = new Array(prefixes.length).fill(false);
-    let i = 0;
+    let i = this.wallets.length;
     while (!validRange.every((v) => v === true)) {
       const child = this.root.deriveChild(i);
       const wallet = child.getWallet();
