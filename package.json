@@ -1,18 +1,18 @@
 {
-  "name": "@metamask/eth-hd-keyring",
+  "name": "@metamask/quai-hd-keyring",
   "version": "3.6.0",
   "description": "A simple standard interface for a seed phrase generated set of Ethereum accounts.",
   "keywords": [
     "ethereum",
     "keyring"
   ],
-  "homepage": "https://github.com/MetaMask/eth-hd-keyring#readme",
+  "homepage": "https://github.com/MetaMask/quai-hd-keyring#readme",
   "bugs": {
-    "url": "https://github.com/MetaMask/eth-hd-keyring/issues"
+    "url": "https://github.com/MetaMask/quai-hd-keyring/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/MetaMask/eth-hd-keyring.git"
+    "url": "https://github.com/MetaMask/quai-hd-keyring.git"
   },
   "license": "ISC",
   "author": "Dan Finlay",
