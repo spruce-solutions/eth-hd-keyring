@@ -10,21 +10,7 @@ const sigUtil = require('eth-sig-util')
 const hdPathString = `m/44'/60'/0'/0`
 const type = 'HD Key Tree'
 
-const bytePrefixes = [
-  '00',
-  '0a',
-  '0b',
-  '0c',
-  '1a',
-  '2a',
-  '3a',
-  '1b',
-  '2b',
-  '3b',
-  '1c',
-  '2c',
-  '3c',
-];
+const byteRange = ['00', '81'];
 
 class HdKeyring extends SimpleKeyring {
 
@@ -58,8 +44,8 @@ class HdKeyring extends SimpleKeyring {
       return this.addAccounts(opts.numberOfAccounts)
     }
 
-    if (opts.addAccountsWithPrefixes) {
-      return this.addAccountsWithPrefixes(opts.addAccountsWithPrefixes);
+    if (opts.prefixRange) {
+      return this.addAccountsWithByteRange(opts.prefixRange);
     }
 
     return Promise.resolve([]);
@@ -84,22 +70,24 @@ class HdKeyring extends SimpleKeyring {
     return Promise.resolve(hexWallets)
   }
 
-  addAccountsWithPrefixes(prefixes = bytePrefixes) {
+  addAccountsWithByteRange(range = byteRange) {
     if (!this.root) {
       this._initFromMnemonic(bip39.generateMnemonic());
     }
 
     const newWallets = [];
-    const validRange = new Array(prefixes.length).fill(false);
+    const start = parseInt(Number('0x' + range[0]), 10);
+    const end = parseInt(Number('0x' + range[1]), 10);
     let i = this.wallets.length;
-    while (!validRange.every((v) => v === true)) {
+    var validAddr = false;
+    while (!validAddr) {
       const child = this.root.deriveChild(i);
       const wallet = child.getWallet();
       let addr = wallet.getAddress().toString('hex');
       let prefix = addr.substring(0, 2);
-      let index = prefixes.indexOf(prefix);
-      if (index > -1 && validRange[index] != true) {
-        validRange[index] = true;
+      let parsed = parseInt(Number('0x' + prefix), 10);
+      if (parsed >= start && parsed <= end) {
+        validAddr = true;
       }
       newWallets.push(wallet);
       this.wallets.push(wallet);

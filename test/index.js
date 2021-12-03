@@ -153,19 +153,25 @@ describe('hd-keyring', function () {
         });
       });
     });
+
+    describe('with a numeric argument', function () {
+      it('creates that number of wallets', function (done) {
+        console.time('Create 100 wallets');
+        keyring.addAccounts(3).then(() => {
+          assert.equal(keyring.wallets.length, 3);
+          done();
+        });
+        console.timeEnd('Create 100 wallets');
+      });
+    });
   });
 
-  describe('#addAccountsWithPrefixes', function () {
+  describe('#addAccountsWithByteRange', function () {
     describe('with no arguments', function () {
       it('creates a wallet with default byte prefixes', function (done) {
-        keyring.addAccountsWithPrefixes().then(() => {
+        keyring.addAccountsWithByteRange(['00', '00']).then(() => {
           for (let i = 0; i < keyring.wallets.length; i++) {
             let addr = keyring.wallets[i].getAddress().toString('hex');
-            let prefix = addr.substring(0, 2);
-            let index = bytePrefixes.indexOf(prefix);
-            if (index > -1) {
-              console.log(addr);
-            }
           }
           done();
         });
