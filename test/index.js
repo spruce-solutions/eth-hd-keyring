@@ -19,22 +19,6 @@ const sampleMnemonic =
 const firstAcct = '0x1c96099350f13d558464ec79b9be4445aa0ef579';
 const secondAcct = '0x1b00aed43a693f3a957f9feb5cc08afa031e37a0';
 
-const bytePrefixes = [
-  '00',
-  '0a',
-  '0b',
-  '0c',
-  '1a',
-  '2a',
-  '3a',
-  '1b',
-  '2b',
-  '3b',
-  '1c',
-  '2c',
-  '3c',
-];
-
 describe('hd-keyring', function () {
   let keyring;
   beforeEach(function () {
